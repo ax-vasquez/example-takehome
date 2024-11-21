@@ -1,6 +1,9 @@
 {
   "name": "elicit-takehome",
   "packageManager": "yarn@4.1.1",
+  "scripts": {
+    "start-web": "cd web && yarn dev"
+  },
   "workspaces": [
     "api",
     "web"

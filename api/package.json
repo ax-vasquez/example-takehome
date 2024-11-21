@@ -1,0 +1,7 @@
+{
+  "name": "api",
+  "packageManager": "yarn@4.1.1",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}

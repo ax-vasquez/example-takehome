@@ -44,11 +44,11 @@ export const WorkflowButtonRow: React.FC<WorkflowButtonRow> = ({
             <button onClick={onClickHandler}>{`Step ${step}`}</button>
             <p className={styles.output}>{output}</p>
             {output && (
-                <button className={styles.clearTextBtn} onClick={() => setOutput(null)}>
+                <button title='clear' className={styles.clearTextBtn} onClick={() => setOutput(null)}>
                     <Image
                         priority
                         src={XCircle}
-                        alt="reset"
+                        alt="clear"
                     />
                 </button>)
             }

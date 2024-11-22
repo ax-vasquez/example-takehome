@@ -1,9 +1,9 @@
 "use client"
-
 import React, { useState } from 'react'
 import styles from './WorkflowButtonRow.module.css'
 import XCircle from '../../public/bootstrap-bi-x-circle.svg'
 import Image from 'next/image'
+import { WORKFLOWS } from '@/constants/workflows'
 
 interface WorkflowButtonRow {
     step: | 0 | 1 
@@ -21,14 +21,7 @@ export const WorkflowButtonRow: React.FC<WorkflowButtonRow> = ({
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                entry_point: "hello_world",
-                tasks: {
-                    hello_world: {
-                        output: "Hello world!"
-                    }
-                }
-            })
+            body: JSON.stringify(WORKFLOWS[step])
         })
         .then(res => res.json())
         .then(res => {

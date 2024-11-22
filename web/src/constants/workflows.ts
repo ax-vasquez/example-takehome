@@ -1,4 +1,4 @@
-import { Workflow } from "@/components/types";
+import { Workflow } from "@/constants/types";
 
 export const WORKFLOWS: { [step: number]: Workflow } = {
     0: {

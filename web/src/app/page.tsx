@@ -1,5 +1,6 @@
 import { WorkflowButtonRow } from "@/components/WorkflowButtonRow";
 import styles from "./page.module.css";
+import { WorkflowDropdown } from "@/components/WorkflowDropdown";
 
 export default function Home() {
 
@@ -7,27 +8,13 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         <h1>Workflow Buttons</h1>
-        <p className={styles.descriptionText}>Each button is labeled for the step in the task that it corresponds to.</p>
+        <p className={styles.descriptionText}>Each option is labeled for the "entry_point" that the corresponding workflow starts with.</p>
         <div style={{
           display: "flex",
           flexDirection: "column",
           gap: '1rem'
         }}>
-          <WorkflowButtonRow 
-            step={0}
-          />
-          <WorkflowButtonRow 
-            step={1}
-          />
-          <WorkflowButtonRow 
-            step={2}
-          />
-          <WorkflowButtonRow 
-            step={3}
-          />
-          <WorkflowButtonRow 
-            step={4}
-          />
+          <WorkflowDropdown />
         </div>
       </main>
     </div>

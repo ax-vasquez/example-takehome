@@ -20,9 +20,10 @@ app.post("/workflow", (req: Request<any, any, Workflow>, res: Response) => {
 
   const reduceTask = (task: WorkflowTask) => {
     // TODO: Way to extract embedded tasks - if an embedded task exists, call this again (recursive)
+    return task.output
   }
 
-  res.json(entry_point)
+  res.json(reduceTask(tasks[entry_point]))
 });
 
 app.listen(port, () => {

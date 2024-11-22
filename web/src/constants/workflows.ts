@@ -8,5 +8,16 @@ export const WORKFLOWS: { [step: number]: Workflow } = {
                 output: 'hello world!'
             }
         }
+    },
+    1: {
+        entry_point: 'hello_name',
+        tasks: {
+            name: {
+                output: 'Alan'
+            },
+            hello_name: {
+                output: 'hello ${name}!'
+            }
+        }
     }
 }

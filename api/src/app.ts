@@ -18,12 +18,16 @@ app.post("/workflow", (req: Request<any, any, Workflow>, res: Response) => {
     tasks
   } = req.body
 
-  const reduceTask = (task: WorkflowTask) => {
-    // TODO: Way to extract embedded tasks - if an embedded task exists, call this again (recursive)
+  const reduceTask = (task: WorkflowTask): string => {
     const regexp = new RegExp(/\$\{(?:\w+)+\}/, 'g')
-    const embeddedStep = task.output.matchAll(regexp)
-    console.log(`MATCHES: `, embeddedStep)
-    return task.output
+    const embeddedStepResult = task.output.matchAll(regexp)
+    const nextStep = [...embeddedStepResult][0]
+    if (nextStep !== undefined) {
+      const s = nextStep.toString().replace('${', '').replace('}', '')
+      return task.output.replace(nextStep.toString(), reduceTask(tasks[s]))
+    } else {
+      return task.output
+    }
   }
 
   res.json(reduceTask(tasks[entry_point]))

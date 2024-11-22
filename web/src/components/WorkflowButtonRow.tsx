@@ -15,7 +15,7 @@ export const WorkflowButtonRow: React.FC<WorkflowButtonRow> = ({
 
     const [output, setOutput] = useState<string | null>()
 
-    const onClickHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const onClickHandler = (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         fetch("http://localhost:3001/workflow", {
             method: 'POST',
             headers: {

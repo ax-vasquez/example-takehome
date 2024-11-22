@@ -24,4 +24,10 @@ export type Workflow = {
 	tasks: {
 		[task: string]: WorkflowTask
 	}
+    /**
+     * Optional key-value pair object containing one, or more inputs
+     */
+    input?: {
+        [i: string]: string
+    }
 }

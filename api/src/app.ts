@@ -15,19 +15,29 @@ app.post("/workflow", (req: Request<any, any, Workflow>, res: Response) => {
   res.setHeader('Content-Type', 'application/json')
   const {
     entry_point,
-    tasks
+    tasks,
+    input
   } = req.body
 
   const reduceTask = (task: WorkflowTask): string => {
-    const regexp = new RegExp(/\$\{(?:\w+)+\}/, 'g')
-    const embeddedStepResult = task.output.matchAll(regexp)
+
+    const embeddedTaskRegexp = new RegExp(/\$\{(?:\w+)+\}/, 'g')
+    const embeddedStepResult = task.output.matchAll(embeddedTaskRegexp)
     const nextStep = [...embeddedStepResult][0]
     if (nextStep !== undefined) {
       const s = nextStep.toString().replace('${', '').replace('}', '')
       return task.output.replace(nextStep.toString(), reduceTask(tasks[s]))
-    } else {
-      return task.output
     }
+
+    const embeddedInputParamRegexp = new RegExp(/\@\{(?:\w+)+\}/, 'g')
+    const embeddedInputParamResult = task.output.matchAll(embeddedInputParamRegexp)
+    const inputParam = [...embeddedInputParamResult][0]
+    if (inputParam !== undefined && input) {
+      const s = inputParam.toString().replace('@{', '').replace('}', '')
+      return task.output.replace(inputParam.toString(), input[s])
+    }
+    
+    return task.output
   }
 
   res.json(reduceTask(tasks[entry_point]))

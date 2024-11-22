@@ -4,6 +4,10 @@
     align-items: center;
 }
 
+.input {
+    margin: 0 1rem;
+}
+
 .output {
     flex: 1;
     display: flex;

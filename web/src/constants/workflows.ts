@@ -19,5 +19,13 @@ export const WORKFLOWS: { [step: number]: Workflow } = {
                 output: 'hello ${name}!'
             }
         }
+    },
+    2: {
+        entry_point: 'hello_input',
+        tasks: {
+            hello_input: {
+                output: 'hello @{name}!'
+            }
+        }
     }
 }

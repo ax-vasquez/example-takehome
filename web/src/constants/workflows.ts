@@ -27,5 +27,18 @@ export const WORKFLOWS: { [step: number]: Workflow } = {
                 output: 'hello @{name}!'
             }
         }
+    },
+    3: {
+        entry_point: 'slow_goodbye',
+        tasks: {
+            slow_goodbye: {
+                steps: [
+                    {
+                        wait: 5
+                    }
+                ],
+                output: 'goodbye!'
+            }
+        }
     }
 }

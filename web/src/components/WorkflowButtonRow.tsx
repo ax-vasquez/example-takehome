@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { WORKFLOWS } from '@/constants/workflows'
 
 interface WorkflowButtonRow {
-    step: | 0 | 1 | 2
+    step: | 0 | 1 | 2 | 3
 }
 
 export const WorkflowButtonRow: React.FC<WorkflowButtonRow> = ({
@@ -15,8 +15,10 @@ export const WorkflowButtonRow: React.FC<WorkflowButtonRow> = ({
 
     const [output, setOutput] = useState<string | null>()
     const [input, setInput] = useState<string>('')
+    const [fetching, setFetching] = useState(false)
 
     const onClickHandler = (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        setFetching(true)
         fetch("http://localhost:3001/workflow", {
             method: 'POST',
             headers: {
@@ -35,12 +37,15 @@ export const WorkflowButtonRow: React.FC<WorkflowButtonRow> = ({
         })
         .catch(e => {
             setOutput(`ERROR: ${e.message}`)
-        }) 
+        })
+        .finally(() => {
+            setFetching(false)
+        })
     }
 
     return (
         <div className={styles.container}>
-            <button onClick={onClickHandler}>{`Step ${step}`}</button>
+            <button disabled={fetching} onClick={onClickHandler}>{`Step ${step}`}</button>
             {step === 2 && <input className={styles.input} value={input} placeholder='name' onChange={(e) => setInput(e.target.value)} />}
             <p className={styles.output}>{output}</p>
             {output && (

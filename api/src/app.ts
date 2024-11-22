@@ -11,7 +11,7 @@ const port = process.env.PORT || 3001;
 app.use(cors())
 app.use(express.json());
 
-app.post("/workflow", (req: Request<any, any, Workflow>, res: Response) => {
+app.post("/workflow", async (req: Request<any, any, Workflow>, res: Response) => {
   res.setHeader('Content-Type', 'application/json')
   const {
     entry_point,
@@ -19,14 +19,22 @@ app.post("/workflow", (req: Request<any, any, Workflow>, res: Response) => {
     input
   } = req.body
 
-  const reduceTask = (task: WorkflowTask): string => {
+  const reduceTask = async (task: WorkflowTask): Promise<string> => {
+
+    if (task.steps) {
+      await Promise.all(
+        task.steps.map(async step => {
+          await new Promise(r => setTimeout(r, (step.wait * 1000)))
+        })
+      )
+    }
 
     const embeddedTaskRegexp = new RegExp(/\$\{(?:\w+)+\}/, 'g')
     const embeddedStepResult = task.output.matchAll(embeddedTaskRegexp)
     const nextStep = [...embeddedStepResult][0]
     if (nextStep !== undefined) {
       const s = nextStep.toString().replace('${', '').replace('}', '')
-      return task.output.replace(nextStep.toString(), reduceTask(tasks[s]))
+      return task.output.replace(nextStep.toString(), await reduceTask(tasks[s]))
     }
 
     const embeddedInputParamRegexp = new RegExp(/\@\{(?:\w+)+\}/, 'g')
@@ -36,11 +44,11 @@ app.post("/workflow", (req: Request<any, any, Workflow>, res: Response) => {
       const s = inputParam.toString().replace('@{', '').replace('}', '')
       return task.output.replace(inputParam.toString(), input[s])
     }
-    
+
     return task.output
   }
 
-  res.json(reduceTask(tasks[entry_point]))
+  res.json(await reduceTask(tasks[entry_point]))
 });
 
 app.listen(port, () => {

@@ -40,3 +40,30 @@ a {
     color-scheme: dark;
   }
 }
+
+button {
+  padding: 0.25rem 1rem;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.fading-content{
+  animation:fading-content 0.5s 1;
+  -webkit-animation:fading-content 0.5s 1;
+  animation-fill-mode: forwards;
+
+  animation-delay:4s;
+  -webkit-animation-delay:4s; /* Safari and Chrome */
+  -webkit-animation-fill-mode: forwards;
+}
+
+@keyframes fading-content{
+  from {opacity :1;}
+  to {opacity :0;}
+}
+
+@-webkit-keyframes fading-content{
+  from {opacity :1;}
+  to {opacity :0;}
+}

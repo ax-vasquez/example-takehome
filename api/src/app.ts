@@ -31,10 +31,16 @@ app.post("/workflow", async (req: Request<any, any, Workflow>, res: Response) =>
 
     const embeddedTaskRegexp = new RegExp(/\$\{(?:\w+)+\}/, 'g')
     const embeddedStepResult = task.output.matchAll(embeddedTaskRegexp)
-    const nextStep = [...embeddedStepResult][0]
-    if (nextStep !== undefined) {
-      const s = nextStep.toString().replace('${', '').replace('}', '')
-      return task.output.replace(nextStep.toString(), await reduceTask(tasks[s]))
+    const nextSteps = [...embeddedStepResult]
+    if (nextSteps.length > 0) {
+      await Promise.all(
+        nextSteps.map(async step => {
+          const s = step.toString().replace('${', '').replace('}', '')
+          const result = await reduceTask(tasks[s])
+          task.output = task.output.replace(step.toString(), result)
+        })
+      )
+      return task.output
     }
 
     const embeddedInputParamRegexp = new RegExp(/\@\{(?:\w+)+\}/, 'g')

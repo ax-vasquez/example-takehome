@@ -40,5 +40,29 @@ export const WORKFLOWS: { [step: number]: Workflow } = {
                 output: 'goodbye!'
             }
         }
+    },
+    4: {
+        entry_point: 'join',
+        tasks: {
+            slow_goodbye: {
+                steps: [
+                    {
+                        wait: 5
+                    }
+                ],
+                output: 'goodbye'
+            },
+            slow_name: {
+                steps: [
+                    {
+                        wait: 5
+                    }
+                ],
+                output: 'Ada'
+            },
+            join: {
+                output: '${slow_goodbye} ${slow_name}!'
+            }
+        }
     }
 }

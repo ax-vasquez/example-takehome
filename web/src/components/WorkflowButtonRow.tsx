@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { WORKFLOWS } from '@/constants/workflows'
 
 interface WorkflowButtonRow {
-    step: | 0 | 1 | 2 | 3
+    step: | 0 | 1 | 2 | 3 | 4
 }
 
 export const WorkflowButtonRow: React.FC<WorkflowButtonRow> = ({

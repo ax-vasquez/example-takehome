@@ -25,6 +25,9 @@ export default function Home() {
           <WorkflowButtonRow 
             step={3}
           />
+          <WorkflowButtonRow 
+            step={4}
+          />
         </div>
       </main>
     </div>

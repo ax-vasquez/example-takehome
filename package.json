@@ -3,7 +3,8 @@
   "packageManager": "yarn@4.1.1",
   "scripts": {
     "start-web": "cd web && yarn dev",
-    "start-api": "cd api && yarn dev"
+    "start-api": "cd api && yarn dev",
+    "clean": "rm -rf node_modules && cd web && rm -rf node_modules && rm -rf .next"
   },
   "workspaces": [
     "api",

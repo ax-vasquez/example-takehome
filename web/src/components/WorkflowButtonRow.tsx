@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styles from './WorkflowButtonRow.module.css'
 import XCircle from '../../public/bootstrap-bi-x-circle.svg'
 import Image from 'next/image'
@@ -21,6 +21,9 @@ export const WorkflowButtonRow: React.FC<WorkflowButtonRow> = ({
         setOutput(null)
     }, [workflow])
 
+    
+    const hasInputField = useMemo(() => workflow === 2 || workflow === 5, [workflow])
+
     const onClickHandler = (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setFetching(true)
         fetch("http://localhost:3001/workflow", {
@@ -30,7 +33,7 @@ export const WorkflowButtonRow: React.FC<WorkflowButtonRow> = ({
             },
             body: JSON.stringify({
                 ...WORKFLOWS[workflow],
-                input: (workflow === 2 && input.length > 0) ? {
+                input: (hasInputField && input.length > 0) ? {
                     name: input
                 } : undefined
             })
@@ -50,7 +53,7 @@ export const WorkflowButtonRow: React.FC<WorkflowButtonRow> = ({
     return (
         <div className={styles.container}>
             <button disabled={fetching} onClick={onClickHandler}>Execute Workflow</button>
-            {workflow === 2 && <input className={styles.input} value={input} placeholder='name' onChange={(e) => setInput(e.target.value)} />}
+            {hasInputField && <input className={styles.input} value={input} placeholder='name' onChange={(e) => setInput(e.target.value)} />}
             <p className={styles.output}>{output}</p>
             {output && (
                 <button title='clear' className={styles.clearTextBtn} onClick={() => setOutput(null)}>

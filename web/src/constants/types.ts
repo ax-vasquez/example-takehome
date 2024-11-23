@@ -6,10 +6,34 @@ export type WorkflowTask = {
     /**
      * The output (a.k.a. "result") of the given step; this can include placeholders for values that are outputs from other
      * steps in the same workflow.
+     * 
+     * If no output key is given for a task, the result of the task is the result of its final step.
      */
-    output: string,
+    output?: string,
+    /**
+     * Steps for this WorkflowTask; A string of ${0} is a placeholder for the result of the previous step in the task
+     */
     steps?: {
-        wait: number
+        /**
+         * Wait an arbitrary amount of time (in seconds)
+         */
+        wait?: number
+        /**
+         * Return the length of the given input argument
+         */
+        length?: string
+        /**
+         * Greater-than; compares the first number with the second (returns true if first argument is greater than the second)
+         */
+        gt?: string[]
+        /**
+         * Evaluate the 
+         */
+        if?: {
+            condition: string
+            true: string
+            false: string
+        }
     }[]
 }
 

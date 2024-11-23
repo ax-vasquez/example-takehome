@@ -19,39 +19,89 @@ app.post("/workflow", async (req: Request<any, any, Workflow>, res: Response) =>
     input
   } = req.body
 
+  const inputMappings: {
+    [s: string]: string
+  } = {}
+
   const reduceTask = async (task: WorkflowTask): Promise<string> => {
 
     if (task.steps) {
       await Promise.all(
-        task.steps.map(async step => {
-          await new Promise(r => setTimeout(r, (step.wait * 1000)))
+        task.steps.map(async (step) => {
+          if (step.wait) {
+            await new Promise(r => {
+              if (step.wait) {
+                return setTimeout(r, (step.wait * 1000))
+              }
+              return
+            })
+          }
         })
       )
     }
 
-    const embeddedTaskRegexp = new RegExp(/\$\{(?:\w+)+\}/, 'g')
-    const embeddedStepResult = task.output.matchAll(embeddedTaskRegexp)
-    const nextSteps = [...embeddedStepResult]
-    if (nextSteps.length > 0) {
-      await Promise.all(
-        nextSteps.map(async step => {
-          const s = step.toString().replace('${', '').replace('}', '')
-          const result = await reduceTask(tasks[s])
-          task.output = task.output.replace(step.toString(), result)
-        })
-      )
-      return task.output
+    if (task.output) {
+      const embeddedInputParamRegexp = new RegExp(/\@\{(?:\w+)+\}/, 'g')
+      const embeddedInputParamResult = task.output.matchAll(embeddedInputParamRegexp)
+      const inputParam = [...embeddedInputParamResult][0]
+      if (inputParam !== undefined && input) {
+        const s = inputParam.toString().replace('@{', '').replace('}', '')
+        inputMappings[inputParam.toString()] = s
+        task.output = task.output.replace(inputParam.toString(), input[s])
+      }
+
+      const embeddedTaskRegexp = new RegExp(/\$\{(?:\w+)+\}/, 'g')
+      const embeddedStepResult = task.output.matchAll(embeddedTaskRegexp)
+      const nextSteps = [...embeddedStepResult]
+      if (nextSteps.length > 0) {
+        await Promise.all(
+          nextSteps.map(async step => {
+            if (task.output) {
+              const s = step.toString().replace('${', '').replace('}', '')
+              const result = await reduceTask(tasks[s])
+              task.output = task.output.replace(step.toString(), result)
+            }
+          })
+        )
+      }
     }
 
-    const embeddedInputParamRegexp = new RegExp(/\@\{(?:\w+)+\}/, 'g')
-    const embeddedInputParamResult = task.output.matchAll(embeddedInputParamRegexp)
-    const inputParam = [...embeddedInputParamResult][0]
-    if (inputParam !== undefined && input) {
-      const s = inputParam.toString().replace('@{', '').replace('}', '')
-      return task.output.replace(inputParam.toString(), input[s])
+    let stepsOutput: any
+    if (task.steps) {
+      task.steps.forEach((step) => {
+        if (step.length) {
+          if (input) {
+            stepsOutput = input[inputMappings[step.length]].length
+          } else {
+            stepsOutput = step.length.length
+          }
+        }
+        if (step.gt) {
+          step.gt[step.gt.indexOf('${0}')] = stepsOutput
+          const arg1 = parseInt(step.gt[0])
+          const arg2 = parseInt(step.gt[1])
+          stepsOutput = arg1 > arg2
+        }
+        if (step.if) {
+          let bool: boolean
+          if (step.if.condition === '${0}') {
+            bool = stepsOutput
+          } else {
+            bool = step.if.condition === 'true' ? true : false
+          }
+          if (bool) {
+            stepsOutput = step.if.true
+          } else {
+            stepsOutput = step.if.false
+          }
+        }
+      })
     }
 
-    return task.output
+    if (task.output) return task.output
+    if (stepsOutput) return stepsOutput
+
+    return ``
   }
 
   res.json(await reduceTask(tasks[entry_point]))

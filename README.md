@@ -1,7 +1,5 @@
 # elicit-takehome
 
-Take-home assignment for Elicit.
-
 To test this application, start in the root of this repository, then:
 1. Open a terminal tab > run `yarn` to install dependencies
 1. Run `yarn start-api`
